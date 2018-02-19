@@ -57,7 +57,6 @@ namespace ServiceContracts
 	using namespace grpc;
 	using namespace DataTransferApi;
 
-	template <class T1, class T2>
 	class Method
 	{
 	public:
@@ -72,9 +71,9 @@ namespace ServiceContracts
 		const RpcMethod::RpcType method_type_;
 	};
 
-	static Method<IMessage, IMessage>* methods[] = {
-		new Method<IMessage, IMessage>("ProcessRequest", RpcMethod::NORMAL_RPC),
-		new Method<IMessage, IMessage>("ProcessRequestServerStreaming", RpcMethod::SERVER_STREAMING)
+	static Method* methods[] = {
+		new Method("ProcessRequest", RpcMethod::NORMAL_RPC),
+		new Method("ProcessRequestServerStreaming", RpcMethod::SERVER_STREAMING)
 	};
 }
 #pragma once
