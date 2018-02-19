@@ -14,8 +14,8 @@ Another goal is to keep data layers and serilizations completety swapable to num
 Key Details:
 1)  Fortunately, Grpc C++ implementations allows you to provide your own implmentations of SerializationTraits so long as they follow 
     the specs below for input and output. The key is to be able to serialize your data into grpc_byte_buffer* and back. 
-    
-    namespace grpc {
+ 
+ namespace grpc {
       template <class T>
       class SerializationTraits<T, typename std::enable_if<std::is_base_of<::DataTransferApi::IMessage, T>::value>::type>
       {
@@ -26,7 +26,7 @@ Key Details:
  
  2) The next step was to define a contract between client and server, which is defined as below:
    
-   namespace ServiceContracts {
+ namespace ServiceContracts {
       class Method {
       public:
         Method(const char* name, const RpcMethod::RpcType type): methodName_(name), method_type_(type) {}
@@ -46,7 +46,7 @@ Key Details:
 
 3) Using the contracts define a service class derived from grpc::Service as I below. I used console hosting of service but in production code we use grpc as a C++ service. 
   	
-    DemoService::DemoService() {
+ DemoService::DemoService() {
       Service::AddMethod(new RpcServiceMethod(ServiceContracts::methods[0]->Name(),
         ServiceContracts::methods[0]->MethodType(),new RpcMethodHandler<DemoService, IMessage, IMessage>
         (std::mem_fn(&DemoApplication::DemoService::ProcessRequest), this)));
@@ -69,9 +69,9 @@ Key Details:
       return stub;
     }
     ...
-   That's it.
-   
- 6) Building:
+That's it.
+    
+Building:
     I used Visual studio 2015 and downloaded Grpc.cpp and its dependencies through Nuget. I realized we need zlib and openssl as             additional dependencies for console hosing on client and server side. There is no need to bring in Protobuf or any custom               compilation.The full list is in packages folder. The sln file is also checked in with all projects. 
    
     
