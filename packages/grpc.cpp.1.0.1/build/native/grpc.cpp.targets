@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" InitialTargets="grpc_cpp_init">
+  <PropertyGroup Label="Default initializers for properties">
+    <Linkage-grpc_cpp Condition="'$(Linkage-grpc_cpp)' == ''">dynamic</Linkage-grpc_cpp>
+    <CallingConvention-grpc_cpp Condition="'$(CallingConvention-grpc_cpp)' == ''">cdecl</CallingConvention-grpc_cpp>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>HAS_GRPC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)../..//build/native/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and v140 and Debug" Condition="'$(Platform.ToLower())' == 'x64' And ( $(PlatformToolset.ToLower().IndexOf('v140')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Debug\grpc.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Debug\grpc++.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Debug\gpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="x64 and v140 and Release" Condition="'$(Platform.ToLower())' == 'x64' And ( $(PlatformToolset.ToLower().IndexOf('v140')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Release\grpc.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Release\grpc++.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/x64\v140\Release\gpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and v140 and Debug" Condition="'$(Platform.ToLower())' == 'win32' And ( $(PlatformToolset.ToLower().IndexOf('v140')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) &gt; -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Debug\grpc.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Debug\grpc++.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Debug\gpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Label="Win32 and v140 and Release" Condition="'$(Platform.ToLower())' == 'win32' And ( $(PlatformToolset.ToLower().IndexOf('v140')) &gt; -1 Or '$(PlatformToolset.ToLower())' == 'windowskernelmodedriver8.0' Or '$(PlatformToolset.ToLower())' == 'windowsapplicationfordrivers8.0' Or '$(PlatformToolset.ToLower())' == 'windowsusermodedriver8.0' ) And ( $(Configuration.ToLower().IndexOf('debug')) == -1 )">
+    <Link>
+      <AdditionalDependencies>$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Release\grpc_plugin_support.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Release\grpc.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Release\grpc++.lib;$(MSBuildThisFileDirectory)../..//build/native/lib/Win32\v140\Release\gpr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\default-propertiesui.xml" />
+  </ItemGroup>
+  <UsingTask TaskName="grpc_cpp_Contains" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.v4.0.dll" TaskFactory="CodeTaskFactory">
+    <ParameterGroup>
+      <Text Output="false" ParameterType="System.String" />
+      <Library Output="false" Required="true" ParameterType="System.String" />
+      <Value Output="false" Required="true" ParameterType="System.String" />
+      <Result Output="true" ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code>Result = ((Text ?? "").Split(';').Contains(Library) ) ? Value : String.Empty;</Code>
+    </Task>
+  </UsingTask>
+  <Target Name="grpc_cpp_init">
+    <grpc_cpp_Contains Text="Linkage-dynamic" Library="grpc_cpp" Value="dynamic" Condition="'$(Linkage-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="Linkage-static" Library="grpc_cpp" Value="static" Condition="'$(Linkage-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="Linkage-ltcg" Library="grpc_cpp" Value="ltcg" Condition="'$(Linkage-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="Linkage-sxs" Library="grpc_cpp" Value="sxs" Condition="'$(Linkage-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="Linkage-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="CallingConvention-cdecl" Library="grpc_cpp" Value="cdecl" Condition="'$(CallingConvention-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="CallingConvention-stdcall" Library="grpc_cpp" Value="stdcall" Condition="'$(CallingConvention-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="CallingConvention-fastcall" Library="grpc_cpp" Value="fastcall" Condition="'$(CallingConvention-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="CallingConvention-thiscall" Library="grpc_cpp" Value="thiscall" Condition="'$(CallingConvention-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-grpc_cpp" />
+    </grpc_cpp_Contains>
+    <grpc_cpp_Contains Text="CallingConvention-clrcall" Library="grpc_cpp" Value="clrcall" Condition="'$(CallingConvention-grpc_cpp)'==''">
+      <Output TaskParameter="Result" PropertyName="CallingConvention-grpc_cpp" />
+    </grpc_cpp_Contains>
+  </Target>
+</Project>
