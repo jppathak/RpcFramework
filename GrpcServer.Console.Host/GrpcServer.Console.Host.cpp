@@ -6,7 +6,7 @@
 #include <grpc++/grpc++.h>
 
 void RunServer() {
-	std::string server_address("0.0.0.0:50051");
+	std::string server_address("localhost:9000");
 	DemoApplication::DemoService serviceImpl;
 
 	::grpc::ServerBuilder builder;

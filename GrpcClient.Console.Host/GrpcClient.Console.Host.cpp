@@ -43,8 +43,10 @@ void static SecondRpcMethod(GrpcDemoClient& client)
 
 int main()
 {
-	::GrpcDemoClient client(grpc::CreateChannel("localhost:50051", grpc::InsecureChannelCredentials()));
+	std::shared_ptr<::grpc::Channel> channel = grpc::CreateChannel("localhost:9000", grpc::InsecureChannelCredentials());
+	::GrpcDemoClient client(channel);
 	FirstRpcMethod(client);
+	system("pause");
 	SecondRpcMethod(client);
 	system("pause");
 	return 0;

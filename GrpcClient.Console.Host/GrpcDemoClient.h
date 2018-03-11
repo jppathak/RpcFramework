@@ -14,12 +14,7 @@ public:
 		rpcmethod1_(ServiceContracts::methods[0]->Name(), ServiceContracts::methods[0]->MethodType(), channel),
 		rpcmethod2_(ServiceContracts::methods[1]->Name(), ServiceContracts::methods[1]->MethodType(), channel)
 	{}
-	static std::unique_ptr<GrpcDemoClient> NewStub(const std::shared_ptr< ChannelInterface>& channel)
-	{
-		std::unique_ptr<GrpcDemoClient> stub(new GrpcDemoClient(channel));
-		return stub;
-	}
-	
+
 	Status SendRequest(ClientContext* context, const IMessage& request, IMessage* response)
 	{
 		return BlockingUnaryCall<IMessage, IMessage>(channel_.get(), rpcmethod1_, context, request, response);
